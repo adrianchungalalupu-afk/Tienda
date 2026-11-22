@@ -214,10 +214,6 @@
           <span>Subtotal</span>
           <span id="cartSubtotal" class="font-semibold">S/ 0.00</span>
         </div>
-        <div class="flex justify-between text-stone-600">
-          <span>Delivery</span>
-          <span id="cartDelivery" class="font-semibold text-brand-700">S/ 5.00</span>
-        </div>
         <div class="flex justify-between text-base font-extrabold text-slate-900 pt-2 border-t border-stone-200">
           <span>Total a pagar</span>
           <span id="cartTotal">S/ 0.00</span>
@@ -636,14 +632,16 @@
         </div>
       `).join("");
 
+      const total = subtotal;
+
       document.getElementById("cartSubtotal").textContent = `S/ ${subtotal.toFixed(2)}`;
-      document.getElementById("cartDelivery").textContent = `S/ ${delivery.toFixed(2)}`;
       document.getElementById("cartTotal").textContent = `S/ ${total.toFixed(2)}`;
     }
 
     function sendWhatsAppOrder() {
       if (cart.length === 0) return;
       const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const total = subtotal;
 
       const lines = cart.map(item =>
         `• ${item.qty}x ${item.name} (${item.unit}) - S/ ${(item.price * item.qty).toFixed(2)}`
@@ -655,7 +653,6 @@
         ...lines,
         "",
         `Subtotal: S/ ${subtotal.toFixed(2)}`,
-        `Delivery: S/ ${delivery.toFixed(2)}`,
         `*Total: S/ ${total.toFixed(2)}*`
       ].join("\n");
 
