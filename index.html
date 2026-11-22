@@ -81,16 +81,6 @@
       <!-- Acciones -->
       <div class="flex items-center gap-2 sm:gap-3">
         <button
-          onclick="openAddModal()"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold text-xs sm:text-sm border border-brand-200 transition cursor-pointer"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-          </svg>
-          <span>Agregar Producto</span>
-        </button>
-
-        <button
           onclick="toggleCart()"
           class="relative inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md shadow-brand-600/20 transition cursor-pointer"
         >
@@ -196,12 +186,6 @@
       </div>
     </div>
   </div>
-
-  <!-- MODAL: Agregar Nuevo Producto / Cambiar Foto -->
-  <div id="addProductModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl animate-pop my-8">
-      <div class="flex items-center justify-between pb-4 border-b border-stone-100">
-        <div>
 
   <!-- CARRITO / CANASTA LATERAL -->
   <div id="cartOverlay" onclick="toggleCart()" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs hidden transition-opacity"></div>
@@ -394,7 +378,6 @@
     let cart = [];
     let selectedCategory = "Todos";
     let searchQuery = "";
-    let uploadedImageData = "";
 
     const categories = [
       "Todos",
@@ -410,6 +393,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       renderCategories();
       renderProducts(products);
+      renderCart();
     });
 
     // Renderizar botones de categorías
@@ -565,12 +549,13 @@
               <span class="text-3xl font-extrabold text-brand-700">S/ ${p.price.toFixed(2)}</span>
               ${hasOffer ? `<span class="text-sm text-stone-400 line-through">S/ ${p.oldPrice.toFixed(2)}</span>` : ""}
             </div>
-            <button onclick="addToCart(${p.id}); closeQuickView();" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg transition cursor-pointer">
-              + Agregar a mi Canasta
+            <button onclick="addToCart(${p.id}); closeQuickView();" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg shadow-brand-600/20 transition cursor-pointer">
+              Agregar a Mi Canasta
             </button>
           </div>
         </div>
       `;
+
       const modal = document.getElementById("quickViewModal");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
@@ -582,136 +567,77 @@
       modal.classList.remove("flex");
     }
 
-    // Modal Agregar Producto
-    function openAddModal() {
-      uploadedImageData = "";
-      document.getElementById("addProductForm").reset();
-      document.getElementById("imagePreviewContainer").classList.add("hidden");
-      switchImageTab("file");
-      const modal = document.getElementById("addProductModal");
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-    }
+    // Canasta
+    function toggleCart() {
+      const drawer = document.getElementById("cartDrawer");
+      const overlay = document.getElementById("cartOverlay");
+      const isClosed = drawer.classList.contains("translate-x-full");
 
-    function closeAddModal() {
-      const modal = document.getElementById("addProductModal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-    }
-
-    function switchImageTab(type) {
-      const fileBox = document.getElementById("fileInputBox");
-      const urlBox = document.getElementById("urlInputBox");
-      const fileBtn = document.getElementById("tabFileBtn");
-      const urlBtn = document.getElementById("tabUrlBtn");
-
-      if (type === "file") {
-        fileBox.classList.remove("hidden");
-        urlBox.classList.add("hidden");
-        fileBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-brand-600 text-white cursor-pointer";
-        urlBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-stone-100 text-slate-600 cursor-pointer";
+      if (isClosed) {
+        overlay.classList.remove("hidden");
+        drawer.classList.remove("translate-x-full");
       } else {
-        urlBox.classList.remove("hidden");
-        fileBox.classList.add("hidden");
-        urlBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-brand-600 text-white cursor-pointer";
-        fileBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-stone-100 text-slate-600 cursor-pointer";
+        drawer.classList.add("translate-x-full");
+        overlay.classList.add("hidden");
       }
     }
 
-    function previewFileImage(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        uploadedImageData = e.target.result;
-        document.getElementById("imagePreview").src = uploadedImageData;
-        document.getElementById("imagePreviewContainer").classList.remove("hidden");
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function previewUrlImage(url) {
-      if (!url.trim()) {
-        document.getElementById("imagePreviewContainer").classList.add("hidden");
-        uploadedImageData = "";
-        return;
-      }
-      uploadedImageData = url.trim();
-      document.getElementById("imagePreview").src = uploadedImageData;
-      document.getElementById("imagePreviewContainer").classList.remove("hidden");
-    }
-
-    function handleAddProduct(e) {
-      e.preventDefault();
-      const name = document.getElementById("prodName").value.trim();
-      const unit = document.getElementById("prodUnit").value.trim();
-      const category = document.getElementById("prodCategory").value;
-      const price = parseFloat(document.getElementById("prodPrice").value);
-      const oldPriceVal = document.getElementById("prodOldPrice").value;
-      const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
-      const description = document.getElementById("prodDesc").value.trim();
-
-      const finalImage = uploadedImageData || "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80";
-
-      const newProduct = {
-        id: Date.now(),
-        name,
-        unit,
-        category,
-        price,
-        oldPrice,
-        image: finalImage,
-        description
-      };
-
-      products.unshift(newProduct);
-      closeAddModal();
-      applyFilters();
-      showToast(`✓ "${name}" agregado al catálogo`);
-    }
-
-    // Carrito / Canasta
     function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      if (!product) return;
+      const prod = products.find(p => p.id === id);
+      if (!prod) return;
 
       const existing = cart.find(item => item.id === id);
       if (existing) {
         existing.qty += 1;
       } else {
-        cart.push({ ...product, qty: 1 });
+        cart.push({ ...prod, qty: 1 });
       }
-      updateCartUI();
-      showToast(`+1 ${product.name} en tu canasta`);
+
+      renderCart();
+      showToast(`"${prod.name}" agregado a tu canasta`);
     }
 
-    function changeQty(id, delta) {
-      const idx = cart.findIndex(item => item.id === id);
-      if (idx === -1) return;
-      cart[idx].qty += delta;
-      if (cart[idx].qty <= 0) {
-        cart.splice(idx, 1);
+    function updateQty(id, delta) {
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.id !== id);
       }
-      updateCartUI();
+      renderCart();
     }
 
-    function updateCartUI() {
-      const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
-      document.getElementById("cartCountBadge").textContent = totalItems;
-
+    function renderCart() {
       const container = document.getElementById("cartItemsContainer");
       const footer = document.getElementById("cartFooter");
+      const badge = document.getElementById("cartCountBadge");
+      const shippingText = document.getElementById("freeShippingText");
+      const shippingBar = document.getElementById("freeShippingBar");
+
+      const totalCount = cart.reduce((acc, item) => acc + item.qty, 0);
+      badge.textContent = totalCount;
+
+      const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const freeShippingGoal = 50;
+      const progress = Math.min(100, (subtotal / freeShippingGoal) * 100);
+      shippingBar.style.width = `${progress}%`;
+
+      if (subtotal >= freeShippingGoal) {
+        shippingText.textContent = "¡Genial! Tienes Delivery Gratis en tu pedido";
+      } else {
+        const remaining = (freeShippingGoal - subtotal).toFixed(2);
+        shippingText.textContent = `Agrega S/ ${remaining} para obtener Delivery Gratis`;
+      }
 
       if (cart.length === 0) {
+        footer.classList.add("hidden");
         container.innerHTML = `
-          <div class="text-center py-16">
-            <div class="text-5xl mb-3">🛒</div>
-            <p class="font-bold text-slate-700">Tu canasta está vacía</p>
-            <p class="text-xs text-stone-400 mt-1">Agrega abarrotes del catálogo para armar tu pedido.</p>
+          <div class="text-center py-12 text-stone-400">
+            <div class="text-4xl mb-2">🛒</div>
+            <p class="text-sm font-semibold text-stone-600">Tu canasta está vacía</p>
+            <p class="text-xs mt-1">Agrega abarrotes desde el catálogo para armar tu pedido.</p>
           </div>
         `;
-        footer.classList.add("hidden");
-        updateFreeShipping(0);
         return;
       }
 
@@ -720,83 +646,61 @@
         <div class="flex items-center gap-3 bg-stone-50 p-3 rounded-2xl border border-stone-200/70">
           <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-xl object-cover bg-white shrink-0">
           <div class="flex-1 min-w-0">
-            <h4 class="font-bold text-sm text-slate-900 truncate">${item.name}</h4>
-            <span class="text-[11px] text-stone-500 block">${item.unit}</span>
-            <span class="text-sm font-extrabold text-brand-700 mt-0.5 block">S/ ${(item.price * item.qty).toFixed(2)}</span>
+            <h4 class="text-sm font-bold text-slate-900 truncate">${item.name}</h4>
+            <p class="text-xs text-stone-500">${item.unit} · S/ ${item.price.toFixed(2)}</p>
+            <p class="text-sm font-extrabold text-brand-700 mt-1">S/ ${(item.price * item.qty).toFixed(2)}</p>
           </div>
-          <div class="flex items-center gap-1.5 bg-white border border-stone-200 rounded-xl p-1">
-            <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 rounded-lg hover:bg-stone-100 font-bold text-slate-600 cursor-pointer">-</button>
+          <div class="flex items-center gap-1.5">
+            <button onclick="updateQty(${item.id}, -1)" class="w-7 h-7 rounded-lg bg-white border border-stone-200 font-bold text-slate-700 hover:bg-stone-100 cursor-pointer">-</button>
             <span class="w-6 text-center text-xs font-extrabold">${item.qty}</span>
-            <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 rounded-lg hover:bg-stone-100 font-bold text-brand-700 cursor-pointer">+</button>
+            <button onclick="updateQty(${item.id}, 1)" class="w-7 h-7 rounded-lg bg-white border border-stone-200 font-bold text-slate-700 hover:bg-stone-100 cursor-pointer">+</button>
           </div>
         </div>
       `).join("");
 
-      const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-      const delivery = subtotal >= 50 ? 0 : 5;
+      const delivery = subtotal >= freeShippingGoal ? 0 : 5;
       const total = subtotal + delivery;
 
       document.getElementById("cartSubtotal").textContent = `S/ ${subtotal.toFixed(2)}`;
       document.getElementById("cartDelivery").textContent = delivery === 0 ? "GRATIS" : `S/ ${delivery.toFixed(2)}`;
       document.getElementById("cartTotal").textContent = `S/ ${total.toFixed(2)}`;
-
-      updateFreeShipping(subtotal);
     }
 
-    function updateFreeShipping(subtotal) {
-      const goal = 50;
-      const pct = Math.min((subtotal / goal) * 100, 100);
-      document.getElementById("freeShippingBar").style.width = `${pct}%`;
-
-      const text = document.getElementById("freeShippingText");
-      if (subtotal >= goal) {
-        text.innerHTML = "🎉 ¡Genial! Tienes <strong>Delivery GRATIS</strong> en este pedido";
-      } else {
-        const diff = (goal - subtotal).toFixed(2);
-        text.innerHTML = `Agrega <strong>S/ ${diff}</strong> más para tener <strong>Delivery GRATIS</strong>`;
-      }
-    }
-
-    function toggleCart() {
-      const drawer = document.getElementById("cartDrawer");
-      const overlay = document.getElementById("cartOverlay");
-      const isOpen = !drawer.classList.contains("translate-x-full");
-
-      if (isOpen) {
-        drawer.classList.add("translate-x-full");
-        overlay.classList.add("hidden");
-      } else {
-        drawer.classList.remove("translate-x-full");
-        overlay.classList.remove("hidden");
-        updateCartUI();
-      }
-    }
-
-    // Enviar pedido por WhatsApp
     function sendWhatsAppOrder() {
       if (cart.length === 0) return;
-      const phone = "51967497947"; // <-- Cambia este número por el WhatsApp de tu bodega
       const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
       const delivery = subtotal >= 50 ? 0 : 5;
       const total = subtotal + delivery;
 
-      let message = "🛒 *NUEVO PEDIDO - BODEGA FRESCA*\n\n";
-      cart.forEach(item => {
-        message += `• ${item.qty}x ${item.name} (${item.unit}) — S/ ${(item.price * item.qty).toFixed(2)}\n`;
-      });
-      message += `\nSubtotal: S/ ${subtotal.toFixed(2)}`;
-      message += `\nDelivery: ${delivery === 0 ? "GRATIS" : "S/ " + delivery.toFixed(2)}`;
-      message += `\n*TOTAL A PAGAR: S/ ${total.toFixed(2)}*`;
+      const lines = cart.map(item =>
+        `• ${item.qty}x ${item.name} (${item.unit}) - S/ ${(item.price * item.qty).toFixed(2)}`
+      );
 
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      const message = [
+        "Hola *Bodega Fresca*, quiero realizar el siguiente pedido:",
+        "",
+        ...lines,
+        "",
+        `Subtotal: S/ ${subtotal.toFixed(2)}`,
+        `Delivery: ${delivery === 0 ? "GRATIS" : `S/ ${delivery.toFixed(2)}`}`,
+        `*Total: S/ ${total.toFixed(2)}*`
+      ].join("\n");
+
+      const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
     }
 
     function showToast(msg) {
       const toast = document.getElementById("toast");
       toast.textContent = msg;
-      toast.classList.remove("opacity-0");
-      setTimeout(() => toast.classList.add("opacity-0"), 2200);
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+
+      clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 2200);
     }
   </script>
 </body>
