@@ -644,8 +644,6 @@
     function sendWhatsAppOrder() {
       if (cart.length === 0) return;
       const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-      const delivery = 5;
-      const total = subtotal + delivery;
 
       const lines = cart.map(item =>
         `• ${item.qty}x ${item.name} (${item.unit}) - S/ ${(item.price * item.qty).toFixed(2)}`
