@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bodega Fresca — Tienda de Abarrotes y Minimarket</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            cream: '#faf8f5',
+            terracotta: '#e05a2b'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf8f5; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes popIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: popIn 0.2s ease-out forwards; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-brand-100 selection:text-brand-900">
+
+  <!-- Barra superior promocional -->
+  <div class="bg-brand-800 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium">
+    🚚 ¡Delivery GRATIS en pedidos desde <span class="font-bold underline decoration-amber-300">S/ 50.00</span>! Entregas rápidas en menos de 45 min.
+  </div>
+
+  <!-- Navegación Principal -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+      
+      <!-- Logo -->
+      <a href="#" onclick="resetFilters()" class="flex items-center gap-2.5 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-md shadow-brand-600/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-brand-900 block leading-none">Bodega Fresca</span>
+          <span class="text-[11px] font-semibold text-brand-600 uppercase tracking-wider">Abarrotes & Hogar</span>
+        </div>
+      </a>
+
+      <!-- Buscador Desktop -->
+      <div class="hidden md:flex flex-1 max-w-xl relative">
+        <input
+          type="text"
+          id="searchInputDesktop"
+          oninput="syncSearch(this.value)"
+          placeholder="Buscar arroz, aceite, leche, café, fideos..."
+          class="w-full pl-11 pr-4 py-2.5 bg-stone-100 border border-stone-200 rounded-full text-sm focus:outline-none focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition"
+        />
+        <svg class="w-5 h-5 text-stone-400 absolute left-4 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+        </svg>
+      </div>
+
+      <!-- Acciones -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button
+          onclick="openAddModal()"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold text-xs sm:text-sm border border-brand-200 transition cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span>Agregar Producto</span>
+        </button>
+
+        <button
+          onclick="toggleCart()"
+          class="relative inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md shadow-brand-600/20 transition cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span class="hidden sm:inline">Mi Canasta</span>
+          <span id="cartCountBadge" class="bg-amber-400 text-brand-950 text-xs font-extrabold px-2 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Buscador Mobile -->
+    <div class="md:hidden px-4 pb-3">
+      <div class="relative">
+        <input
+          type="text"
+          id="searchInputMobile"
+          oninput="syncSearch(this.value)"
+          placeholder="¿Qué abarrote buscas hoy?"
+          class="w-full pl-10 pr-4 py-2 bg-stone-100 border border-stone-200 rounded-full text-sm focus:outline-none focus:bg-white focus:border-brand-500"
+        />
+        <svg class="w-4 h-4 text-stone-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner Principal -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+    <div class="rounded-3xl bg-gradient-to-r from-brand-800 via-brand-700 to-emerald-600 text-white p-6 sm:p-10 shadow-lg relative overflow-hidden">
+      <div class="relative z-10 max-w-2xl">
+        <span class="inline-block bg-amber-400/20 text-amber-200 border border-amber-300/30 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
+          Despensa siempre surtida
+        </span>
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight mb-3">
+          Tus abarrotes favoritos directo a la puerta de tu casa
+        </h1>
+        <p class="text-brand-100 text-sm sm:text-base mb-5 max-w-lg">
+          Precios de bodega todos los días. Arma tu canasta en segundos y envíanos tu pedido directo por WhatsApp.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-brand-950 font-bold rounded-full text-sm transition shadow cursor-pointer">
+            Ver Productos
+          </button>
+          <button onclick="toggleOffersOnly()" id="heroOfferBtn" class="px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-full text-sm backdrop-blur-sm border border-white/20 transition cursor-pointer">
+            🔥 Ver Ofertas del Día
+          </button>
+        </div>
+      </div>
+      <!-- Decoración -->
+      <div class="hidden lg:block absolute right-8 -bottom-6 text-[150px] opacity-20 select-none pointer-events-none">
+        🧺
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros y Categorías -->
+  <main id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <!-- Pestañas de Categorías -->
+      <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <!-- Se genera dinámicamente -->
+      </div>
+
+      <!-- Filtro de Solo Ofertas -->
+      <label class="inline-flex items-center gap-2.5 cursor-pointer shrink-0 bg-white px-4 py-2 rounded-full border border-stone-200 shadow-xs select-none">
+        <input type="checkbox" id="offersOnlyCheckbox" onchange="applyFilters()" class="w-4 h-4 accent-terracotta rounded cursor-pointer">
+        <span class="text-sm font-semibold text-slate-700">Solo Ofertas <span class="text-terracotta">●</span></span>
+      </label>
+    </div>
+
+    <!-- Contador de resultados -->
+    <div class="flex items-center justify-between mb-4">
+      <p id="resultsCount" class="text-sm text-stone-500 font-medium">Mostrando 12 productos</p>
+    </div>
+
+    <!-- Cuadrícula de Productos -->
+    <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <!-- Tarjetas generadas por JS -->
+    </div>
+
+    <!-- Estado Vacío -->
+    <div id="emptyState" class="hidden text-center py-16 bg-white rounded-3xl border border-stone-200">
+      <div class="text-5xl mb-3">🔍</div>
+      <h3 class="text-lg font-bold text-slate-800">No encontramos ese producto</h3>
+      <p class="text-sm text-stone-500 mt-1 mb-4">Intenta buscar con otro nombre o limpia los filtros.</p>
+      <button onclick="resetFilters()" class="px-5 py-2 bg-brand-600 text-white rounded-full text-sm font-semibold hover:bg-brand-700 transition cursor-pointer">
+        Mostrar todos los abarrotes
+      </button>
+    </div>
+  </main>
+
+  <!-- MODAL: Vista Rápida del Producto -->
+  <div id="quickViewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl animate-pop relative">
+      <button onclick="closeQuickView()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-slate-600 cursor-pointer z-10">
+        ✕
+      </button>
+      <div id="quickViewContent" class="grid grid-cols-1 md:grid-cols-2">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Agregar Nuevo Producto / Cambiar Foto -->
+  <div id="addProductModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl animate-pop my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-stone-100">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">Agregar Abarrote</h2>
+          <p class="text-xs text-stone-500">Sube una foto desde tu PC/celular o pega un enlace</p>
+        </div>
+        <button onclick="closeAddModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-slate-600 cursor-pointer">✕</button>
+      </div>
+
+      <form id="addProductForm" onsubmit="handleAddProduct(event)" class="space-y-4 mt-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre del producto *</label>
+          <input type="text" id="prodName" required placeholder="Ej. Quinua Perlada Orgánica" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Presentación / Peso *</label>
+            <input type="text" id="prodUnit" required placeholder="Ej. Bolsa 1 kg" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Categoría *</label>
+            <select id="prodCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500 bg-white">
+              <option value="Granos y Secos">Granos y Secos</option>
+              <option value="Aceites y Condimentos">Aceites y Condimentos</option>
+              <option value="Lácteos y Huevos">Lácteos y Huevos</option>
+              <option value="Desayuno y Bebidas">Desayuno y Bebidas</option>
+              <option value="Conservas y Enlatados">Conservas y Enlatados</option>
+              <option value="Limpieza y Hogar">Limpieza y Hogar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Precio Venta (S/) *</label>
+            <input type="number" step="0.10" min="0.10" id="prodPrice" required placeholder="12.50" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Precio Anterior (Opcional)</label>
+            <input type="number" step="0.10" min="0.10" id="prodOldPrice" placeholder="15.00" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500">
+          </div>
+        </div>
+
+        <!-- Selector de Imagen -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Imagen del producto *</label>
+          <div class="flex gap-2 mb-2">
+            <button type="button" id="tabFileBtn" onclick="switchImageTab('file')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-brand-600 text-white cursor-pointer">📁 Subir Archivo</button>
+            <button type="button" id="tabUrlBtn" onclick="switchImageTab('url')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-stone-100 text-slate-600 cursor-pointer">🔗 Pegar URL</button>
+          </div>
+
+          <div id="fileInputBox">
+            <label class="flex flex-col items-center justify-center border-2 border-dashed border-stone-300 hover:border-brand-500 rounded-xl p-4 cursor-pointer bg-stone-50 transition">
+              <span class="text-2xl mb-1">📸</span>
+              <span class="text-xs font-semibold text-slate-700">Haz clic para elegir una foto de tu galería</span>
+              <span class="text-[11px] text-stone-400">JPG, PNG o WEBP</span>
+              <input type="file" id="prodImageFile" accept="image/*" onchange="previewFileImage(event)" class="hidden">
+            </label>
+          </div>
+
+          <div id="urlInputBox" class="hidden">
+            <input type="url" id="prodImageUrl" oninput="previewUrlImage(this.value)" placeholder="https://ejemplo.com/foto-producto.jpg" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500">
+          </div>
+
+          <!-- Vista previa -->
+          <div id="imagePreviewContainer" class="hidden mt-3 flex items-center gap-3 p-2 bg-stone-50 rounded-xl border border-stone-200">
+            <img id="imagePreview" src="" alt="Vista previa" class="w-16 h-16 object-cover rounded-lg">
+            <span class="text-xs text-brand-700 font-semibold">✓ Imagen lista para publicar</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Descripción breve</label>
+          <textarea id="prodDesc" rows="2" placeholder="Detalles de marca, origen o preparación..." class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-brand-500"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg shadow-brand-600/20 transition cursor-pointer">
+          Publicar Producto en la Tienda
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CARRITO / CANASTA LATERAL -->
+  <div id="cartOverlay" onclick="toggleCart()" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs hidden transition-opacity"></div>
+  <aside id="cartDrawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+    <!-- Cabecera Canasta -->
+    <div class="p-5 border-b border-stone-200 flex items-center justify-between bg-cream">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🧺</span>
+        <div>
+          <h2 class="font-extrabold text-lg text-slate-900 leading-none">Tu Canasta</h2>
+          <span class="text-xs text-stone-500">Revisa tus abarrotes antes de pedir</span>
+        </div>
+      </div>
+      <button onclick="toggleCart()" class="w-9 h-9 rounded-full bg-white border border-stone-200 hover:bg-stone-100 flex items-center justify-center text-slate-600 cursor-pointer">✕</button>
+    </div>
+
+    <!-- Barra de progreso Delivery Gratis -->
+    <div class="px-5 py-3 bg-brand-50 border-b border-brand-100">
+      <p id="freeShippingText" class="text-xs font-semibold text-brand-800 mb-1.5">
+        Agrega S/ 50.00 para obtener Delivery Gratis
+      </p>
+      <div class="w-full h-2 bg-brand-200 rounded-full overflow-hidden">
+        <div id="freeShippingBar" class="h-full bg-brand-600 transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Lista de items -->
+    <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-5 space-y-3">
+      <!-- Items dinámicos -->
+    </div>
+
+    <!-- Pie de Canasta -->
+    <div id="cartFooter" class="p-5 border-t border-stone-200 bg-cream space-y-3 hidden">
+      <div class="space-y-1 text-sm">
+        <div class="flex justify-between text-stone-600">
+          <span>Subtotal</span>
+          <span id="cartSubtotal" class="font-semibold">S/ 0.00</span>
+        </div>
+        <div class="flex justify-between text-stone-600">
+          <span>Delivery</span>
+          <span id="cartDelivery" class="font-semibold text-brand-700">S/ 5.00</span>
+        </div>
+        <div class="flex justify-between text-base font-extrabold text-slate-900 pt-2 border-t border-stone-200">
+          <span>Total a pagar</span>
+          <span id="cartTotal">S/ 0.00</span>
+        </div>
+      </div>
+
+      <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition cursor-pointer">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+        </svg>
+        <span>Pedir por WhatsApp</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Toast de Notificación -->
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-xl opacity-0 pointer-events-none transition-opacity duration-300">
+    Producto agregado a tu canasta
+  </div>
+
+  <!-- SCRIPT PRINCIPAL -->
+  <script>
+    // 1. CATÁLOGO INICIAL DE ABARROTES (Aquí puedes cambiar las URLs o rutas de tus fotos)
+    const initialProducts = [
+      {
+        id: 1,
+        name: "Arroz Extra Superior",
+        unit: "Bolsa 5 kg",
+        category: "Granos y Secos",
+        price: 22.90,
+        oldPrice: 25.50,
+        image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+        description: "Arroz blanco seleccionado de grano largo y entero. Graneado perfecto y rendimiento superior para toda la familia."
+      },
+      {
+        id: 2,
+        name: "Aceite Vegetal Premium",
+        unit: "Botella 1 L",
+        category: "Aceites y Condimentos",
+        price: 9.80,
+        oldPrice: 11.20,
+        image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80",
+        description: "Aceite 100% vegetal libre de colesterol, ideal para frituras ligeras, aderezos y preparaciones diarias."
+      },
+      {
+        id: 3,
+        name: "Leche Evaporada Entera",
+        unit: "Pack x 6 latas (400g)",
+        category: "Lácteos y Huevos",
+        price: 23.40,
+        oldPrice: null,
+        image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=600&q=80",
+        description: "Leche evaporada enriquecida con vitaminas A y D. Cremosa y nutritiva para el desayuno de toda la familia."
+      },
+      {
+        id: 4,
+        name: "Huevos Pardos de Granja",
+        unit: "Jaba x 15 unidades",
+        category: "Lácteos y Huevos",
+        price: 10.50,
+        oldPrice: 12.00,
+        image: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80",
+        description: "Huevos frescos seleccionados de granja, yema intensa y alto aporte proteico."
+      },
+      {
+        id: 5,
+        name: "Fideos Spaghetti Don Vittorio",
+        unit: "Paquete 1 kg",
+        category: "Granos y Secos",
+        price: 5.20,
+        oldPrice: null,
+        image: "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=600&q=80",
+        description: "Pasta elaborada con sémola de trigo candeal seleccionada. Textura firme al dente."
+      },
+      {
+        id: 6,
+        name: "Azúcar Rubia Doméstica",
+        unit: "Bolsa 2 kg",
+        category: "Granos y Secos",
+        price: 8.40,
+        oldPrice: 9.50,
+        image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=600&q=80",
+        description: "Azúcar rubia natural de caña, ideal para endulzar jugos, infusiones y repostería casera."
+      },
+      {
+        id: 7,
+        name: "Café Tostado Molido",
+        unit: "Bolsa 250 g",
+        category: "Desayuno y Bebidas",
+        price: 16.90,
+        oldPrice: 19.50,
+        image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
+        description: "Café peruano de altura con aroma intenso y notas achocolatadas. Tostado medio."
+      },
+      {
+        id: 8,
+        name: "Filete de Atún en Aceite",
+        unit: "Lata 170 g",
+        category: "Conservas y Enlatados",
+        price: 6.50,
+        oldPrice: null,
+        image: "https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?auto=format&fit=crop&w=600&q=80",
+        description: "Trozos seleccionados de filete de atún en aceite vegetal, rico en Omega 3 y listo para servir."
+      },
+      {
+        id: 9,
+        name: "Detergente en Polvo Floral",
+        unit: "Bolsa 2.6 kg",
+        category: "Limpieza y Hogar",
+        price: 24.90,
+        oldPrice: 28.90,
+        image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=600&q=80",
+        description: "Remueve manchas difíciles desde el primer lavado dejando un fresco aroma floral en tu ropa."
+      },
+      {
+        id: 10,
+        name: "Papel Higiénico Doble Hoja",
+        unit: "Paquete x 12 rollos",
+        category: "Limpieza y Hogar",
+        price: 18.50,
+        oldPrice: null,
+        image: "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80",
+        description: "Máxima suavidad y resistencia con textura acolchada de doble hoja."
+      },
+      {
+        id: 11,
+        name: "Pan de Molde Integral",
+        unit: "Bolsa 500 g",
+        category: "Desayuno y Bebidas",
+        price: 7.90,
+        oldPrice: null,
+        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+        description: "Pan integral suave y fresco elaborado con harina de trigo entero, fuente natural de fibra."
+      },
+      {
+        id: 12,
+        name: "Agua Mineral Sin Gas",
+        unit: "Bidón 7 L",
+        category: "Desayuno y Bebidas",
+        price: 8.90,
+        oldPrice: 10.00,
+        image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80",
+        description: "Agua pura y refrescante en formato familiar de 7 litros con caño dispensador."
+      }
+    ];
+
+    let products = [...initialProducts];
+    let cart = [];
+    let selectedCategory = "Todos";
+    let searchQuery = "";
+    let uploadedImageData = "";
+
+    const categories = [
+      "Todos",
+      "Granos y Secos",
+      "Aceites y Condimentos",
+      "Lácteos y Huevos",
+      "Desayuno y Bebidas",
+      "Conservas y Enlatados",
+      "Limpieza y Hogar"
+    ];
+
+    // Inicializar página
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCategories();
+      renderProducts(products);
+    });
+
+    // Renderizar botones de categorías
+    function renderCategories() {
+      const container = document.getElementById("categoryTabs");
+      container.innerHTML = categories.map(cat => {
+        const active = cat === selectedCategory;
+        return `
+          <button
+            onclick="selectCategory('${cat}')"
+            class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition cursor-pointer ${
+              active
+                ? "bg-brand-600 text-white shadow-sm"
+                : "bg-white text-slate-600 hover:bg-stone-100 border border-stone-200"
+            }"
+          >
+            ${cat}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectCategory(cat) {
+      selectedCategory = cat;
+      renderCategories();
+      applyFilters();
+    }
+
+    function syncSearch(val) {
+      searchQuery = val.toLowerCase().trim();
+      document.getElementById("searchInputDesktop").value = val;
+      document.getElementById("searchInputMobile").value = val;
+      applyFilters();
+    }
+
+    function toggleOffersOnly() {
+      const cb = document.getElementById("offersOnlyCheckbox");
+      cb.checked = !cb.checked;
+      applyFilters();
+      document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function resetFilters() {
+      selectedCategory = "Todos";
+      searchQuery = "";
+      document.getElementById("searchInputDesktop").value = "";
+      document.getElementById("searchInputMobile").value = "";
+      document.getElementById("offersOnlyCheckbox").checked = false;
+      renderCategories();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const onlyOffers = document.getElementById("offersOnlyCheckbox").checked;
+      const filtered = products.filter(p => {
+        const matchesCat = selectedCategory === "Todos" || p.category === selectedCategory;
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
+        const matchesOffer = !onlyOffers || (p.oldPrice && p.oldPrice > p.price);
+        return matchesCat && matchesSearch && matchesOffer;
+      });
+      renderProducts(filtered);
+    }
+
+    // Renderizar tarjetas de productos
+    function renderProducts(list) {
+      const grid = document.getElementById("productsGrid");
+      const empty = document.getElementById("emptyState");
+      const count = document.getElementById("resultsCount");
+
+      count.textContent = `Mostrando ${list.length} producto${list.length === 1 ? "" : "s"}`;
+
+      if (list.length === 0) {
+        grid.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+      }
+
+      empty.classList.add("hidden");
+      grid.innerHTML = list.map(p => {
+        const hasOffer = p.oldPrice && p.oldPrice > p.price;
+        const discount = hasOffer ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
+
+        return `
+          <div class="group bg-white rounded-2xl border border-stone-200/80 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+            <!-- Imagen -->
+            <div class="relative aspect-square bg-stone-100 overflow-hidden cursor-pointer" onclick="openQuickView(${p.id})">
+              <img
+                src="${p.image}"
+                alt="${p.name}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'"
+              />
+              ${hasOffer ? `
+                <span class="absolute top-3 left-3 bg-terracotta text-white text-xs font-extrabold px-2.5 py-1 rounded-full shadow">
+                  -${discount}% OFERTA
+                </span>
+              ` : ""}
+              <span class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-xs text-slate-700 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-xs">
+                ${p.unit}
+              </span>
+            </div>
+
+            <!-- Info -->
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-brand-600">${p.category}</span>
+                <h3 onclick="openQuickView(${p.id})" class="font-bold text-slate-900 text-base mt-0.5 leading-snug hover:text-brand-700 cursor-pointer">
+                  ${p.name}
+                </h3>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between gap-2">
+                <div>
+                  ${hasOffer ? `<span class="text-xs text-stone-400 line-through block">S/ ${p.oldPrice.toFixed(2)}</span>` : ""}
+                  <span class="text-lg font-extrabold text-slate-900">S/ ${p.price.toFixed(2)}</span>
+                </div>
+
+                <button
+                  onclick="addToCart(${p.id})"
+                  class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <span>Agregar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Vista Rápida
+    function openQuickView(id) {
+      const p = products.find(item => item.id === id);
+      if (!p) return;
+      const hasOffer = p.oldPrice && p.oldPrice > p.price;
+
+      document.getElementById("quickViewContent").innerHTML = `
+        <div class="bg-stone-100 aspect-square md:aspect-auto">
+          <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+        </div>
+        <div class="p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <span class="inline-block bg-brand-50 text-brand-700 text-xs font-bold px-3 py-1 rounded-full mb-2">${p.category}</span>
+            <h2 class="text-2xl font-extrabold text-slate-900">${p.name}</h2>
+            <p class="text-sm font-semibold text-stone-500 mt-1">Presentación: ${p.unit}</p>
+            <p class="text-sm text-slate-600 mt-4 leading-relaxed">${p.description || "Producto de primera calidad seleccionado para tu despensa."}</p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-stone-100">
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-extrabold text-brand-700">S/ ${p.price.toFixed(2)}</span>
+              ${hasOffer ? `<span class="text-sm text-stone-400 line-through">S/ ${p.oldPrice.toFixed(2)}</span>` : ""}
+            </div>
+            <button onclick="addToCart(${p.id}); closeQuickView();" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg transition cursor-pointer">
+              + Agregar a mi Canasta
+            </button>
+          </div>
+        </div>
+      `;
+      const modal = document.getElementById("quickViewModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeQuickView() {
+      const modal = document.getElementById("quickViewModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // Modal Agregar Producto
+    function openAddModal() {
+      uploadedImageData = "";
+      document.getElementById("addProductForm").reset();
+      document.getElementById("imagePreviewContainer").classList.add("hidden");
+      switchImageTab("file");
+      const modal = document.getElementById("addProductModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeAddModal() {
+      const modal = document.getElementById("addProductModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function switchImageTab(type) {
+      const fileBox = document.getElementById("fileInputBox");
+      const urlBox = document.getElementById("urlInputBox");
+      const fileBtn = document.getElementById("tabFileBtn");
+      const urlBtn = document.getElementById("tabUrlBtn");
+
+      if (type === "file") {
+        fileBox.classList.remove("hidden");
+        urlBox.classList.add("hidden");
+        fileBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-brand-600 text-white cursor-pointer";
+        urlBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-stone-100 text-slate-600 cursor-pointer";
+      } else {
+        urlBox.classList.remove("hidden");
+        fileBox.classList.add("hidden");
+        urlBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-brand-600 text-white cursor-pointer";
+        fileBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-stone-100 text-slate-600 cursor-pointer";
+      }
+    }
+
+    function previewFileImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageData = e.target.result;
+        document.getElementById("imagePreview").src = uploadedImageData;
+        document.getElementById("imagePreviewContainer").classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function previewUrlImage(url) {
+      if (!url.trim()) {
+        document.getElementById("imagePreviewContainer").classList.add("hidden");
+        uploadedImageData = "";
+        return;
+      }
+      uploadedImageData = url.trim();
+      document.getElementById("imagePreview").src = uploadedImageData;
+      document.getElementById("imagePreviewContainer").classList.remove("hidden");
+    }
+
+    function handleAddProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById("prodName").value.trim();
+      const unit = document.getElementById("prodUnit").value.trim();
+      const category = document.getElementById("prodCategory").value;
+      const price = parseFloat(document.getElementById("prodPrice").value);
+      const oldPriceVal = document.getElementById("prodOldPrice").value;
+      const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
+      const description = document.getElementById("prodDesc").value.trim();
+
+      const finalImage = uploadedImageData || "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80";
+
+      const newProduct = {
+        id: Date.now(),
+        name,
+        unit,
+        category,
+        price,
+        oldPrice,
+        image: finalImage,
+        description
+      };
+
+      products.unshift(newProduct);
+      closeAddModal();
+      applyFilters();
+      showToast(`✓ "${name}" agregado al catálogo`);
+    }
+
+    // Carrito / Canasta
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      if (!product) return;
+
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      updateCartUI();
+      showToast(`+1 ${product.name} en tu canasta`);
+    }
+
+    function changeQty(id, delta) {
+      const idx = cart.findIndex(item => item.id === id);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) {
+        cart.splice(idx, 1);
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+      document.getElementById("cartCountBadge").textContent = totalItems;
+
+      const container = document.getElementById("cartItemsContainer");
+      const footer = document.getElementById("cartFooter");
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16">
+            <div class="text-5xl mb-3">🛒</div>
+            <p class="font-bold text-slate-700">Tu canasta está vacía</p>
+            <p class="text-xs text-stone-400 mt-1">Agrega abarrotes del catálogo para armar tu pedido.</p>
+          </div>
+        `;
+        footer.classList.add("hidden");
+        updateFreeShipping(0);
+        return;
+      }
+
+      footer.classList.remove("hidden");
+      container.innerHTML = cart.map(item => `
+        <div class="flex items-center gap-3 bg-stone-50 p-3 rounded-2xl border border-stone-200/70">
+          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-xl object-cover bg-white shrink-0">
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-sm text-slate-900 truncate">${item.name}</h4>
+            <span class="text-[11px] text-stone-500 block">${item.unit}</span>
+            <span class="text-sm font-extrabold text-brand-700 mt-0.5 block">S/ ${(item.price * item.qty).toFixed(2)}</span>
+          </div>
+          <div class="flex items-center gap-1.5 bg-white border border-stone-200 rounded-xl p-1">
+            <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 rounded-lg hover:bg-stone-100 font-bold text-slate-600 cursor-pointer">-</button>
+            <span class="w-6 text-center text-xs font-extrabold">${item.qty}</span>
+            <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 rounded-lg hover:bg-stone-100 font-bold text-brand-700 cursor-pointer">+</button>
+          </div>
+        </div>
+      `).join("");
+
+      const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const delivery = subtotal >= 50 ? 0 : 5;
+      const total = subtotal + delivery;
+
+      document.getElementById("cartSubtotal").textContent = `S/ ${subtotal.toFixed(2)}`;
+      document.getElementById("cartDelivery").textContent = delivery === 0 ? "GRATIS" : `S/ ${delivery.toFixed(2)}`;
+      document.getElementById("cartTotal").textContent = `S/ ${total.toFixed(2)}`;
+
+      updateFreeShipping(subtotal);
+    }
+
+    function updateFreeShipping(subtotal) {
+      const goal = 50;
+      const pct = Math.min((subtotal / goal) * 100, 100);
+      document.getElementById("freeShippingBar").style.width = `${pct}%`;
+
+      const text = document.getElementById("freeShippingText");
+      if (subtotal >= goal) {
+        text.innerHTML = "🎉 ¡Genial! Tienes <strong>Delivery GRATIS</strong> en este pedido";
+      } else {
+        const diff = (goal - subtotal).toFixed(2);
+        text.innerHTML = `Agrega <strong>S/ ${diff}</strong> más para tener <strong>Delivery GRATIS</strong>`;
+      }
+    }
+
+    function toggleCart() {
+      const drawer = document.getElementById("cartDrawer");
+      const overlay = document.getElementById("cartOverlay");
+      const isOpen = !drawer.classList.contains("translate-x-full");
+
+      if (isOpen) {
+        drawer.classList.add("translate-x-full");
+        overlay.classList.add("hidden");
+      } else {
+        drawer.classList.remove("translate-x-full");
+        overlay.classList.remove("hidden");
+        updateCartUI();
+      }
+    }
+
+    // Enviar pedido por WhatsApp
+    function sendWhatsAppOrder() {
+      if (cart.length === 0) return;
+      const phone = "51967497947"; // <-- Cambia este número por el WhatsApp de tu bodega
+      const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const delivery = subtotal >= 50 ? 0 : 5;
+      const total = subtotal + delivery;
+
+      let message = "🛒 *NUEVO PEDIDO - BODEGA FRESCA*\n\n";
+      cart.forEach(item => {
+        message += `• ${item.qty}x ${item.name} (${item.unit}) — S/ ${(item.price * item.qty).toFixed(2)}\n`;
+      });
+      message += `\nSubtotal: S/ ${subtotal.toFixed(2)}`;
+      message += `\nDelivery: ${delivery === 0 ? "GRATIS" : "S/ " + delivery.toFixed(2)}`;
+      message += `\n*TOTAL A PAGAR: S/ ${total.toFixed(2)}*`;
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0");
+      setTimeout(() => toast.classList.add("opacity-0"), 2200);
+    }
+  </script>
+</body>
+</html>
