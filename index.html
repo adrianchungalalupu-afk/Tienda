@@ -202,16 +202,6 @@
       <button onclick="toggleCart()" class="w-9 h-9 rounded-full bg-white border border-stone-200 hover:bg-stone-100 flex items-center justify-center text-slate-600 cursor-pointer">✕</button>
     </div>
 
-    <!-- Barra de progreso recuerdo -->
-    <div class="px-5 py-3 bg-brand-50 border-b border-brand-100">
-      <p id="freeShippingText" class="text-xs font-semibold text-brand-800 mb-1.5">
-        No se te olvida nada? 😉
-      </p>
-      <div class="w-full h-2 bg-brand-200 rounded-full overflow-hidden">
-        <div id="freeShippingBar" class="h-full bg-brand-600 transition-all duration-300" style="width: 0%"></div>
-      </div>
-    </div>
-
     <!-- Lista de items -->
     <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-5 space-y-3">
       <!-- Items dinámicos -->
@@ -611,23 +601,11 @@
       const container = document.getElementById("cartItemsContainer");
       const footer = document.getElementById("cartFooter");
       const badge = document.getElementById("cartCountBadge");
-      const shippingText = document.getElementById("freeShippingText");
-      const shippingBar = document.getElementById("freeShippingBar");
 
       const totalCount = cart.reduce((acc, item) => acc + item.qty, 0);
       badge.textContent = totalCount;
 
       const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-      const freeShippingGoal = 50;
-      const progress = Math.min(100, (subtotal / freeShippingGoal) * 100);
-      shippingBar.style.width = `${progress}%`;
-
-      if (subtotal >= freeShippingGoal) {
-        shippingText.textContent = "¡Genial! Tienes Delivery Gratis en tu pedido";
-      } else {
-        const remaining = (freeShippingGoal - subtotal).toFixed(2);
-        shippingText.textContent = `Agrega S/ ${remaining} para obtener Delivery Gratis`;
-      }
 
       if (cart.length === 0) {
         footer.classList.add("hidden");
@@ -658,18 +636,18 @@
         </div>
       `).join("");
 
-      const delivery = subtotal >= freeShippingGoal ? 0 : 5;
+      const delivery = 5;
       const total = subtotal + delivery;
 
       document.getElementById("cartSubtotal").textContent = `S/ ${subtotal.toFixed(2)}`;
-      document.getElementById("cartDelivery").textContent = delivery === 0 ? "GRATIS" : `S/ ${delivery.toFixed(2)}`;
+      document.getElementById("cartDelivery").textContent = `S/ ${delivery.toFixed(2)}`;
       document.getElementById("cartTotal").textContent = `S/ ${total.toFixed(2)}`;
     }
 
     function sendWhatsAppOrder() {
       if (cart.length === 0) return;
       const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-      const delivery = subtotal >= 50 ? 0 : 5;
+      const delivery = 5;
       const total = subtotal + delivery;
 
       const lines = cart.map(item =>
@@ -682,7 +660,7 @@
         ...lines,
         "",
         `Subtotal: S/ ${subtotal.toFixed(2)}`,
-        `Delivery: ${delivery === 0 ? "GRATIS" : `S/ ${delivery.toFixed(2)}`}`,
+        `Delivery: S/ ${delivery.toFixed(2)}`,
         `*Total: S/ ${total.toFixed(2)}*`
       ].join("\n");
 
