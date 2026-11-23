@@ -23,8 +23,7 @@
               800: '#166534',
               900: '#14532d',
             },
-            cream: '#faf8f5',
-            terracotta: '#e05a2b'
+            cream: '#faf8f5'
           }
         }
       }
@@ -59,7 +58,7 @@
           </svg>
         </div>
         <div>
-          <span class="text-xl font-extrabold tracking-tight text-brand-900 block leading-none">Nery's Store</span>
+          <span class="text-xl font-extrabold tracking-tight text-brand-900 block leading-none">Bodega Fresca</span>
           <span class="text-[11px] font-semibold text-brand-600 uppercase tracking-wider">Abarrotes & Hogar</span>
         </div>
       </a>
@@ -118,7 +117,7 @@
           Despensa siempre surtida
         </span>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight mb-3">
-          Precios que cuidan tu bolsillo, calidad que llena tu mesa
+          Tus abarrotes favoritos directo a la puerta de tu casa
         </h1>
         <p class="text-brand-100 text-sm sm:text-base mb-5 max-w-lg">
           Precios de bodega todos los días. Arma tu canasta en segundos y envíanos tu pedido directo por WhatsApp.
@@ -126,9 +125,6 @@
         <div class="flex flex-wrap gap-3">
           <button onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-brand-950 font-bold rounded-full text-sm transition shadow cursor-pointer">
             Ver Productos
-          </button>
-          <button onclick="toggleOffersOnly()" id="heroOfferBtn" class="px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-full text-sm backdrop-blur-sm border border-white/20 transition cursor-pointer">
-            🔥 Ver Ofertas del Día
           </button>
         </div>
       </div>
@@ -146,12 +142,6 @@
       <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
         <!-- Se genera dinámicamente -->
       </div>
-
-      <!-- Filtro de Solo Ofertas -->
-      <label class="inline-flex items-center gap-2.5 cursor-pointer shrink-0 bg-white px-4 py-2 rounded-full border border-stone-200 shadow-xs select-none">
-        <input type="checkbox" id="offersOnlyCheckbox" onchange="applyFilters()" class="w-4 h-4 accent-terracotta rounded cursor-pointer">
-        <span class="text-sm font-semibold text-slate-700">Solo Ofertas <span class="text-terracotta">●</span></span>
-      </label>
     </div>
 
     <!-- Contador de resultados -->
@@ -244,7 +234,6 @@
         unit: "Bolsa 5 kg",
         category: "Granos y Secos",
         price: 22.90,
-        oldPrice: 25.50,
         image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
         description: "Arroz blanco seleccionado de grano largo y entero. Graneado perfecto y rendimiento superior para toda la familia."
       },
@@ -254,7 +243,6 @@
         unit: "Botella 1 L",
         category: "Aceites y Condimentos",
         price: 9.80,
-        oldPrice: 11.20,
         image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80",
         description: "Aceite 100% vegetal libre de colesterol, ideal para frituras ligeras, aderezos y preparaciones diarias."
       },
@@ -264,7 +252,6 @@
         unit: "Pack x 6 latas (400g)",
         category: "Lácteos y Huevos",
         price: 23.40,
-        oldPrice: null,
         image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=600&q=80",
         description: "Leche evaporada enriquecida con vitaminas A y D. Cremosa y nutritiva para el desayuno de toda la familia."
       },
@@ -274,7 +261,6 @@
         unit: "Jaba x 15 unidades",
         category: "Lácteos y Huevos",
         price: 10.50,
-        oldPrice: 12.00,
         image: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80",
         description: "Huevos frescos seleccionados de granja, yema intensa y alto aporte proteico."
       },
@@ -284,7 +270,6 @@
         unit: "Paquete 1 kg",
         category: "Granos y Secos",
         price: 5.20,
-        oldPrice: null,
         image: "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=600&q=80",
         description: "Pasta elaborada con sémola de trigo candeal seleccionada. Textura firme al dente."
       },
@@ -294,7 +279,6 @@
         unit: "Bolsa 2 kg",
         category: "Granos y Secos",
         price: 8.40,
-        oldPrice: 9.50,
         image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=600&q=80",
         description: "Azúcar rubia natural de caña, ideal para endulzar jugos, infusiones y repostería casera."
       },
@@ -304,7 +288,6 @@
         unit: "Bolsa 250 g",
         category: "Desayuno y Bebidas",
         price: 16.90,
-        oldPrice: 19.50,
         image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
         description: "Café peruano de altura con aroma intenso y notas achocolatadas. Tostado medio."
       },
@@ -314,7 +297,6 @@
         unit: "Lata 170 g",
         category: "Conservas y Enlatados",
         price: 6.50,
-        oldPrice: null,
         image: "https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?auto=format&fit=crop&w=600&q=80",
         description: "Trozos seleccionados de filete de atún en aceite vegetal, rico en Omega 3 y listo para servir."
       },
@@ -324,7 +306,6 @@
         unit: "Bolsa 2.6 kg",
         category: "Limpieza y Hogar",
         price: 24.90,
-        oldPrice: 28.90,
         image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=600&q=80",
         description: "Remueve manchas difíciles desde el primer lavado dejando un fresco aroma floral en tu ropa."
       },
@@ -334,7 +315,6 @@
         unit: "Paquete x 12 rollos",
         category: "Limpieza y Hogar",
         price: 18.50,
-        oldPrice: null,
         image: "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80",
         description: "Máxima suavidad y resistencia con textura acolchada de doble hoja."
       },
@@ -344,7 +324,6 @@
         unit: "Bolsa 500 g",
         category: "Desayuno y Bebidas",
         price: 7.90,
-        oldPrice: null,
         image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
         description: "Pan integral suave y fresco elaborado con harina de trigo entero, fuente natural de fibra."
       },
@@ -354,7 +333,6 @@
         unit: "Bidón 7 L",
         category: "Desayuno y Bebidas",
         price: 8.90,
-        oldPrice: 10.00,
         image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80",
         description: "Agua pura y refrescante en formato familiar de 7 litros con caño dispensador."
       }
@@ -415,30 +393,20 @@
       applyFilters();
     }
 
-    function toggleOffersOnly() {
-      const cb = document.getElementById("offersOnlyCheckbox");
-      cb.checked = !cb.checked;
-      applyFilters();
-      document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
-    }
-
     function resetFilters() {
       selectedCategory = "Todos";
       searchQuery = "";
       document.getElementById("searchInputDesktop").value = "";
       document.getElementById("searchInputMobile").value = "";
-      document.getElementById("offersOnlyCheckbox").checked = false;
       renderCategories();
       applyFilters();
     }
 
     function applyFilters() {
-      const onlyOffers = document.getElementById("offersOnlyCheckbox").checked;
       const filtered = products.filter(p => {
         const matchesCat = selectedCategory === "Todos" || p.category === selectedCategory;
         const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
-        const matchesOffer = !onlyOffers || (p.oldPrice && p.oldPrice > p.price);
-        return matchesCat && matchesSearch && matchesOffer;
+        return matchesCat && matchesSearch;
       });
       renderProducts(filtered);
     }
@@ -459,9 +427,6 @@
 
       empty.classList.add("hidden");
       grid.innerHTML = list.map(p => {
-        const hasOffer = p.oldPrice && p.oldPrice > p.price;
-        const discount = hasOffer ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
-
         return `
           <div class="group bg-white rounded-2xl border border-stone-200/80 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
             <!-- Imagen -->
@@ -472,11 +437,6 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'"
               />
-              ${hasOffer ? `
-                <span class="absolute top-3 left-3 bg-terracotta text-white text-xs font-extrabold px-2.5 py-1 rounded-full shadow">
-                  -${discount}% OFERTA
-                </span>
-              ` : ""}
               <span class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-xs text-slate-700 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-xs">
                 ${p.unit}
               </span>
@@ -493,7 +453,6 @@
 
               <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between gap-2">
                 <div>
-                  ${hasOffer ? `<span class="text-xs text-stone-400 line-through block">S/ ${p.oldPrice.toFixed(2)}</span>` : ""}
                   <span class="text-lg font-extrabold text-slate-900">S/ ${p.price.toFixed(2)}</span>
                 </div>
 
@@ -517,7 +476,6 @@
     function openQuickView(id) {
       const p = products.find(item => item.id === id);
       if (!p) return;
-      const hasOffer = p.oldPrice && p.oldPrice > p.price;
 
       document.getElementById("quickViewContent").innerHTML = `
         <div class="bg-stone-100 aspect-square md:aspect-auto">
@@ -533,7 +491,6 @@
           <div class="mt-6 pt-4 border-t border-stone-100">
             <div class="flex items-baseline gap-2 mb-4">
               <span class="text-3xl font-extrabold text-brand-700">S/ ${p.price.toFixed(2)}</span>
-              ${hasOffer ? `<span class="text-sm text-stone-400 line-through">S/ ${p.oldPrice.toFixed(2)}</span>` : ""}
             </div>
             <button onclick="addToCart(${p.id}); closeQuickView();" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg shadow-brand-600/20 transition cursor-pointer">
               Agregar a Mi Canasta
